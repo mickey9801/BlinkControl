@@ -17,27 +17,32 @@ BlinkControl(int pin);
 BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
 ```
 
-## Usage
-
-1. Create a BlinkControl object with pin numnber or Shifty instance.
+## Usage (Digital Pin)
+1. Include BlinkControl module
+   
+   ```cpp
+   #include <BlinkControl.h>
+   ```
+   
+2. Create a BlinkControl object with pin numnber or Shifty instance.
    
    ```cpp
    BlinkControl led = BlinkControl(15);
    ```
    
-2. In setup(), setup the BlinkControl object.
+3. In setup(), setup the BlinkControl object.
    
    ```cpp
    led.begin();
    ```
 
-3. In setup(), set blinking timing.
+4. In setup(), set blinking timing.
    
    ```cpp
    led.blink1(); // Blink once pre second
    ```
    
-4. In loop(), run the loop() script of the BlinkControl instance.
+5. In loop(), run the loop() script of the BlinkControl instance.
    
    ```cpp
    led.loop();
@@ -50,7 +55,7 @@ LEDs and buzzer blink with different timing. When pressed the key in PIN 12, pau
 ```cpp
 #include <EasyButton.h>
 #include <Shifty.h>
-#include "BlinkControl.h"
+#include <BlinkControl.h>
 
 #define SHIFTY_BIT_COUNT  8
 Shifty shift;
