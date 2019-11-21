@@ -1,0 +1,62 @@
+#ifndef BLINK_CONTROL_H
+#define BLINK_CONTROL_H
+
+#include <Arduino.h>
+#include <Shifty.h>
+
+#define BC_STATE_OFF    0
+#define BC_STATE_ON     1
+#define BC_STATE_BLINK  2
+
+class BlinkControl {
+  public:
+    BlinkControl(int pin);
+    BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
+
+    void begin();
+    void loop();
+
+    void on(bool shiftRegOffOthers=false); // set pin to constant HIGH
+    void offAll(); // for shift register only
+    void off();    // set BlinkControl state to OFF only
+    void pause();
+    void resume();
+
+    int getState();
+    bool isOff();
+
+    // convenient methods for blinking
+    void blink(int *timings, int timingCount); // custom beat
+    void blink1(); // blink once per second
+    void blink2(); // blink twice per second
+    void blink3(); // blink three times per second
+    void blink4(); // blink four times per second
+    void clearBlink();
+  
+  private:
+    int _state = BC_STATE_OFF;
+    int _prevState = BC_STATE_OFF;
+    
+    int _pin = -1;
+    
+    Shifty* _shiftReg;
+    int _shiftRegBitCount = 8;
+
+    int blinkTiming1[2] = {100,900};
+    int blinkTiming2[4] = {80,150,80,690};
+    int blinkTiming3[6] = {80,130,80,130,80,500};
+    int blinkTiming4[8] = {80,80,80,80,80,80,80,440};
+    
+    int* _blinkTiming;
+    int _timingCount = 0;
+    int _timingCursor = 0;
+    unsigned long _lastAction = 0;
+    bool _pinOn = false;
+
+    void _onOne(bool shiftRegOffOthers=false);
+    void _offOne();
+    void _shiftRegAllPinOff();
+    void _shiftRegOnePinOnOnly(int pinNum, bool value);
+};
+
+#endif /* BLINK_CONTROL_H */
