@@ -3,7 +3,7 @@ Arduino/ESP32 module for easily manage multiple LED blinking or Buzzer beats wit
 
 This module can work with digitial pin or shift 74HC595 registers through johnnyb's [Shifty](https://github.com/johnnyb/Shifty).
 
-## Constructor
+## Constructors
 
 **Digitial Pin**
 
@@ -11,13 +11,13 @@ This module can work with digitial pin or shift 74HC595 registers through johnny
 BlinkControl(int pin);
 ```
 
-**Pin of Shift Register**
+**Pin of 74HC595 Shift Register**
 
 ```cpp
 BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
 ```
 
-## Usage (Digital Pin)
+## Usage
 1. Include BlinkControl module
    
    ```cpp
@@ -50,7 +50,7 @@ BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
 
 ## Example
 
-LEDs and buzzer blink with different timing. When pressed the key in PIN 12, pause the buzzer and LED in PIN 0 of 74HC595, and change the blinking timing of LED in PIN 2 of 74HC595. We use evert-arias' [EasyButton](https://github.com/evert-arias/EasyButton) to handle button actions.
+LEDs and buzzer blink with different timing. When the button in PIN 12 pressed, pause the buzzer and LED in PIN 0 of 74HC595, and change the blinking timing of LED in PIN 2 of 74HC595. We use evert-arias' [EasyButton](https://github.com/evert-arias/EasyButton) to handle button actions.
 
 ```cpp
 #include <EasyButton.h>
