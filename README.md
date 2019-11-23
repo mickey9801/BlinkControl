@@ -149,7 +149,7 @@ void loop() {
 
 ### Simple On/Off
 
-- **void on (**bool **shiftRegOffOthers**=false**)**
+- **void on (** bool **shiftRegOffOthers**=false **)**
   
   Set pin to **HIGH**. If work with shift register, you may turn off all other shift register pins with `shiftRegOffOthers` option set to **ture**.  
   
@@ -192,7 +192,7 @@ void loop() {
   led.resume();
   ```
 
-- **void blink (**int **timings[],** int **timingCount)**
+- **void blink (** int **timings[],** int **timingCount )**
   
   Customize blink timing by providing a timing array. Unit of each value is millisecond. Pin will be set to **HIGH** and **LOW** alternatively based on those timing, starting from **HIGH**.  
   
