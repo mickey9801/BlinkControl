@@ -23,20 +23,26 @@ Each instance of the module control one pin. Module provide some predefined blin
    ```cpp
    led.begin();
    ```
-
-4. In setup(), set blink timing.
    
-   ```cpp
-   led.blink1(); // Blink once pre second using predefined timing
-   ```
-   
-5. In loop() of the sketch, run the object's loop() method.
+4. In loop() of the sketch, run the object's loop() method.
    
    ```cpp
    void loop() {
      led.loop();
    }
    ```   
+
+5. Set blink timing
+   
+   ```cpp
+   led.blink1(); // Blink once pre second using predefined timing
+   ```
+   
+   or just turn it on
+   
+   ```cpp
+   led.on();
+   ```
 
 ## Example
 
