@@ -1,3 +1,29 @@
+/**
+ * BlinkControl
+ * Copyright (c) 2019 Mickey Chan
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * 
+ * Developed for Arduino-ESP32
+ * Created by Mickey Chan (developer AT comicparty.com)
+ * 
+ */
 #include "Arduino.h"
 #include "BlinkControl.h"
 
@@ -10,6 +36,10 @@ BlinkControl::BlinkControl(Shifty *sh, int shiftRegPin, int bitCount) {
   this->_shiftReg = sh;
   this->_pin = shiftRegPin;
   this->_shiftRegBitCount = bitCount;
+}
+
+BlinkControl::~BlinkControl() {
+  delete[] this->_blinkTiming;
 }
 
 void BlinkControl::begin() {
@@ -90,9 +120,9 @@ void BlinkControl::pause() {
   this->_offOne();
   this->_timingCursor = 0;
   this->_pinOn = false;
-  this->_lastAction = 0;
   this->_prevState = this->_state;
   this->_state = BC_STATE_OFF;
+  this->_lastAction = 0;
 }
 
 void BlinkControl::resume() {
@@ -111,12 +141,17 @@ bool BlinkControl::isOff() {
   } else return false;
 }
 
-void BlinkControl::blink(int *timings, int timingCount) {
+void BlinkControl::blink(int timings[], int timingCount) {
   if (this->_state == BC_STATE_ON) {
     this->off();
   }
-  this->_blinkTiming = timings;
+  
   this->_timingCount = timingCount;
+  this->_blinkTiming = new int[this->_timingCount];
+  for (int i = 0; i < this->_timingCount; i++) {
+    this->_blinkTiming[i] = timings[i];
+  }
+  
   this->_timingCursor = 0;
   this->_state = BC_STATE_BLINK;
   this->_lastAction = 0;
@@ -139,7 +174,8 @@ void BlinkControl::blink4() {
 }
 
 void BlinkControl::clearBlink() {
-  this->_blinkTiming = NULL;
+  this->_offOne();
+  delete[] this->_blinkTiming;
   this->_timingCount = 0;
   this->_pinOn = false;
   this->_prevState = BC_STATE_OFF;
