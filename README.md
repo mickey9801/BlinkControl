@@ -21,7 +21,9 @@ Each instance of the module control one pin. Module provide some predefined blin
 3. In setup(), initial the BlinkControl object.
    
    ```cpp
-   led.begin();
+   void setup() {
+     led.begin();
+   }
    ```
    
 4. In loop() of the sketch, run the object's loop() method.
