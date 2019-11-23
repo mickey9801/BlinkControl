@@ -123,7 +123,7 @@ void loop() {
    BlinkControl(int pin);
    ```
 
-- **Build Object with 74HC595 Shift Register Pin**
+- **Build Object with 74HC595 Shift Register Pin, work with [Shifty](https://github.com/johnnyb/Shifty) library**
    
    ```cpp
    BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
