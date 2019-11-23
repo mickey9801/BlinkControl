@@ -1,35 +1,35 @@
 #######################################
-# Syntax Coloring Map For MultiButtons
+# Syntax Coloring Map For BlinkControl
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-BlinkControl	KEYWORD1
+BlinkControl			KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-begin                  KEYWORD2
-loop                   KEYWORD2
-on                     KEYWORD2
-off                    KEYWORD2
-offAll                 KEYWORD2
-pause                  KEYWORD2
-resume                 KEYWORD2
-getState               KEYWORD2
-isOff                  KEYWORD2
-blink1                 KEYWORD2
-blink2                 KEYWORD2
-blink3                 KEYWORD2
-blink4                 KEYWORD2
-clearBlink             KEYWORD2
-_onOne                 KEYWORD2
-_offOne                KEYWORD2
-_shiftRegAllPinOff     KEYWORD2
-_shiftRegOnePinOnOnly  KEYWORD2
+begin					KEYWORD2
+loop					KEYWORD2
+on						KEYWORD2
+off						KEYWORD2
+offAll					KEYWORD2
+pause					KEYWORD2
+resume					KEYWORD2
+getState				KEYWORD2
+isOff					KEYWORD2
+blink1					KEYWORD2
+blink2					KEYWORD2
+blink3					KEYWORD2
+blink4					KEYWORD2
+clearBlink				KEYWORD2
+_onOne					KEYWORD2
+_offOne					KEYWORD2
+_shiftRegAllPinOff		KEYWORD2
+_shiftRegOnePinOnOnly	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
@@ -39,6 +39,7 @@ _shiftRegOnePinOnOnly  KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-BC_STATE_OFF     LITERAL1
-BC_STATE_ON      LITERAL1
-BC_STATE_BLINK   LITERAL1
+BC_STATE_OFF			LITERAL1
+BC_STATE_ON				LITERAL1
+BC_STATE_BLINK			LITERAL1
+BC_STATE_BREATH			LITERAL1
