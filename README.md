@@ -15,8 +15,10 @@ Each instance of the module control one pin. Module provide some predefined blin
 2. Create a BlinkControl object with pin number or [Shifty](https://github.com/johnnyb/Shifty) instance.
    
    ```cpp
-   BlinkControl led = BlinkControl(15);
+   BlinkControl led(15);
    ```
+   
+   (For detail of create BlinkControl instance for 74HC595, please check [Shift Register 74Hc595](examples/shift_register_74hc595/shift_register_74hc595.ino) example.)
    
 3. In setup(), initial the BlinkControl object.
    
