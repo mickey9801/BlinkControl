@@ -40,7 +40,7 @@ Each instance of the module control one pin. Module provide some predefined blin
 
 ## Example
 
-Control 5 LEDs and buzzer blink with different timing. When the button connect to PIN 12 pressed, pause the buzzer, turn off LED in PIN 0 of 74HC595 and change the blink timing of LED in PIN 2 of 74HC595.  
+Control 1 LED connected to digital pin, 4 LED connected to 74HC595 shift register and a buzzer "blink" with different timing. When the button connect to PIN 12 pressed, pause the buzzer, turn off LED in PIN 0 of 74HC595 and change the blink timing of LED in PIN 2 of 74HC595.  
 
 We use evert-arias' [EasyButton](https://github.com/evert-arias/EasyButton) to handle button actions.  
 
@@ -84,15 +84,20 @@ void setup() {
   
   led.begin();     // Initial led
   led.blink1();    // Blink once per second
+  
   sled1.begin();
   sled1.on();      // Turn on led
+  
   sled2.begin();
   sled2.blink3();  // Blink three times per second
+  
   sled3.begin();
   int sled3Timing[] = {1000,200,60,200,1000,200,60,1000}; // Custom blink timing
   sled3.blink(sled3Timing, sizeof(sled3Timing)/sizeof(int)); // Set custom blink timing
+  
   sled4.begin();
   sled4.blink2();  // Blink twice per second
+  
   buzzer.begin();
   buzzer.blink4(); // Blink four times per second
 
