@@ -1,7 +1,7 @@
 # BlinkControl
 Arduino/ESP32 module for easily manage multiple LED blinking or Buzzer beats with different timing in same circuit.  
 
-This module can work with digitial pin, or 74HC595 shift register via johnnyb's [Shifty](https://github.com/johnnyb/Shifty).  
+This module can work with digital pin, or 74HC595 shift register via johnnyb's [Shifty](https://github.com/johnnyb/Shifty).  
 
 Each instance of the module control one pin. Module provide some predefined blink timing. You may control blink timing by providing a timing array.  
 
@@ -132,7 +132,7 @@ void loop() {
 ## APIs
 ### Constructors
 
-- **Build Object with Digitial Pin**
+- **Build Object with Digital Pin**
    
    ```cpp
    BlinkControl(int pin);
