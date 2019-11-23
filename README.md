@@ -146,7 +146,7 @@ void loop() {
 
 ### Setup methods
 
-- **void begin ()**
+- void **begin ()**
   
   Initial object parameters. Should be placed inside setup() of the sketch.  
   
@@ -154,7 +154,7 @@ void loop() {
   begin();
   ```
   
-- **void loop ()**
+- void **loop ()**
   
   Module loop. Should be placed inside loop() of the sketch.  
     
@@ -164,7 +164,7 @@ void loop() {
 
 ### Simple On/Off
 
-- **void on (** bool **shiftRegOffOthers**=false **)**
+- void **on (** bool **shiftRegOffOthers**=false **)**
   
   Set pin to **HIGH**. If work with shift register, you may turn off all other shift register pins with `shiftRegOffOthers` option set to **ture**.  
   
@@ -173,7 +173,7 @@ void loop() {
   shiftRegisterPin.on(false); // shift register pin
   ```
   
-- **void off()**
+- void **off ()**
   
   Set pin to **LOW**.  
   
@@ -181,7 +181,7 @@ void loop() {
   led.off();
   ```
   
-- **void offAll ()**
+- void **offAll ()**
   
   *Only work for shift register.* Set all pins of same shift register to **LOW**.  
   
@@ -191,7 +191,7 @@ void loop() {
 
 ### Blink related
 
-- **void pause ()**
+- void **pause ()**
   
   Pause blinking.
 
@@ -199,7 +199,7 @@ void loop() {
   led.pause();
   ```
 
-- **void resume ()**
+- void **resume ()**
   
   Resume blinking from pause.  
   
@@ -207,7 +207,7 @@ void loop() {
   led.resume();
   ```
 
-- **void blink (** int **timings[],** int **timingCount )**
+- void **blink (** int **timings[],** int **timingCount )**
   
   Customize blink timing by providing a timing array. Unit of each value is millisecond. Pin will be set to **HIGH** and **LOW** alternatively based on those timing, starting from **HIGH**.  
   
@@ -225,7 +225,7 @@ void loop() {
   void blink4(); // blink four times per second
   ```
 
-- **void clearBlink ()**
+- void **clearBlink ()**
   
   Reset the object and delete blink timing.
   
@@ -235,20 +235,28 @@ void loop() {
 
 ### Status related
 
-- **int getState ()**
+- int **getState ()**
   
   Retrieve the state of pin. Possible return values are:  
   
-  Constant          |Value|Description
-  ------------------|-----|-----------
-  BC\_STATE\_OFF    |  0  | Pin level set to **LOW**
-  BC\_STATE\_ON     |  1  | Pin level set to **HIGH** and not blinking
-  BC\_STATE\_BLINK  |  2  | Blinking
+  Constant            |Value|Description
+  :-------------------|:---:|:----------
+  BC\_STATE\_OFF      |  0  | Pin level set to **LOW**
+  BC\_STATE\_ON       |  1  | Pin level set to **HIGH** and not blinking
+  BC\_STATE\_BLINK    |  2  | Blinking
   *BC\_STATE\_BREATH* |  3  | *[under construction]* Breathing LED (for PWM pin only)
+  
+  ```cpp
+  int state = led.getState();
+  ```
 
-- **bool isOff ()**
+- bool **isOff ()**
   
   Check if the LED is off (set to **LOW**).
+  
+  ```cpp
+  bool result = led.isOff();
+  ```
 
 ## What's Next
 
