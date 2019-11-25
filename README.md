@@ -5,6 +5,16 @@ This module can work with digital pin, or 74HC595 shift register via johnnyb's [
 
 Each instance of the module control one pin. Module provide some predefined blink timing. You may control blink timing by providing a timing array.  
 
+## Dependencies
+[Shifty by Johnnyb](https://github.com/johnnyb/Shifty)
+
+
+## Installation
+
+1. [Arduino Library Manager (Recommended)](https://www.arduino.cc/en/Guide/Libraries)  
+2. [Download or clone this repository into your arduino libraries directory](https://help.github.com/articles/cloning-a-repository/)  
+
+
 ## Usage
 1. Include BlinkControl module
    
