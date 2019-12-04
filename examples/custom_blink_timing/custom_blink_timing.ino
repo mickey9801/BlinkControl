@@ -6,7 +6,7 @@ bool btnState = true;
 unsigned long lastPressedAt = 0;
 
 void setup() {
-  pinMode(12, OUTPUT);
+  pinMode(12, INPUT);
   
   led.begin();
 

@@ -25,11 +25,19 @@ blink1					KEYWORD2
 blink2					KEYWORD2
 blink3					KEYWORD2
 blink4					KEYWORD2
+fastBlinking			KEYWORD2
+breathe					KEYWORD2
+pulse					KEYWORD2
 clearBlink				KEYWORD2
+_blinkLoop				KEYWORD2
+_breatheLoop			KEYWORD2
+_pulseLoop				KEYWORD2
 _onOne					KEYWORD2
 _offOne					KEYWORD2
 _shiftRegAllPinOff		KEYWORD2
 _shiftRegOnePinOnOnly	KEYWORD2
+_pwmAttachPin			KEYWORD2
+_pwmDetachPin			KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
@@ -42,4 +50,5 @@ _shiftRegOnePinOnOnly	KEYWORD2
 BC_STATE_OFF			LITERAL1
 BC_STATE_ON				LITERAL1
 BC_STATE_BLINK			LITERAL1
-BC_STATE_BREATH			LITERAL1
+BC_STATE_BREATHE		LITERAL1
+BC_STATE_PULSE			LITERAL1

@@ -1,9 +1,9 @@
 # BlinkControl
-Arduino/ESP32 module for easily manage multiple LED blinking or Buzzer beats with different timing in same circuit.  
+This is an Arduino/ESP32 module for easily manage multiple LED blinking or Buzzer beats with different timing.  
 
-This module can work with digital pin, or 74HC595 shift register via johnnyb's [Shifty](https://github.com/johnnyb/Shifty).  
+This module can work with digital pins, analog pins, or 74HC595 shift register via johnnyb's [Shifty](https://github.com/johnnyb/Shifty).  
 
-Each instance of the module control one pin. Module provide some predefined blink timing. You may control blink timing by providing a timing array.  
+Each instance of the module control one pin. Module provide some predefined blink timing. You may also control blink timing by providing a timing array.  
 
 ## Dependencies
 [Shifty by Johnnyb](https://github.com/johnnyb/Shifty)
@@ -142,17 +142,23 @@ void loop() {
 ## APIs
 ### Constructors
 
-- **Build Object with Digital Pin**
+- **Build with Digital Pin**
    
    ```cpp
    BlinkControl(int pin);
    ```
 
-- **Build Object with 74HC595 Shift Register Pin, work with [Shifty](https://github.com/johnnyb/Shifty) library**
+- **Build with 74HC595 Shift Register Pin, work with [Shifty](https://github.com/johnnyb/Shifty) library**
    
    ```cpp
    BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
    ```
+   
+- **Build for ESP32 breathe LED**
+  
+  ```cpp
+  BlinkControl(int pin, uint8_t channel, double freq=50, uint8_t resolutionBits=8);
+  ```
 
 ### Setup methods
 
@@ -233,15 +239,33 @@ void loop() {
   void blink2(); // blink twice per second
   void blink3(); // blink three times per second
   void blink4(); // blink four times per second
+  void fastBlinking(); // fast blinking with 6.25 times per second
   ```
 
 - void **clearBlink ()**
   
-  Reset the object and delete blink timing.
+  Reset the object and delete blink timing.  
   
   ```cpp
   led.clearBlink();
   ```
+  
+### Breathe LED
+
+These methods are only for analog (PWM) pins of Android and ESP32.  
+
+  ```cpp
+  void breathe(uint8_t duration=2000);
+  void pulse(uint8_t duration=1500);
+  ```
+  
+For ESP32, you should use the following constructor to create a LED instance for breathe/pulse (Setup PWM channel and attach to the pin):
+
+```cpp
+BlinkControl(int pin, uint8_t channel, double freq=50, uint8_t resolutionBits=8);
+```
+
+It is OK for LEDs the use both breathe and blink. The module will handle attach/detech operation of assigned pin when switching between analog breathe/pluse and digital blink.  
 
 ### Status related
 
@@ -252,9 +276,10 @@ void loop() {
   Constant            |Value|Description
   :-------------------|:---:|:----------
   BC\_STATE\_OFF      |  0  | Pin level set to **LOW**
-  BC\_STATE\_ON       |  1  | Pin level set to **HIGH** and not blinking
+  BC\_STATE\_ON       |  1  | Pin level set to **HIGH** and not blink
   BC\_STATE\_BLINK    |  2  | Blinking
-  *BC\_STATE\_BREATH* |  3  | *[under construction]* Breathing LED (for PWM pin only)
+  BC\_STATE\_BREATHE  |  3  | Breathe LED (for PWM pin only)
+  BC\_STATE\_PULSE    |  4  | Pulse LED (for PWM pin only)
   
   ```cpp
   int state = led.getState();
@@ -271,4 +296,3 @@ void loop() {
 ## What's Next
 
 - Build a Shify Manager to handle bit writing operation across multiple BlinkControl instances for faster operation.
-- PWM Breathing LED
