@@ -30,11 +30,13 @@
 #include <Arduino.h>
 #include <Shifty.h>
 
-#define BC_STATE_OFF     0
-#define BC_STATE_ON      1
-#define BC_STATE_BLINK   2
-#define BC_STATE_BREATHE 3
-#define BC_STATE_PULSE   4
+#define BC_STATE_OFF      0
+#define BC_STATE_ON       1
+#define BC_STATE_BLINK    2
+#define BC_STATE_BREATHE  3
+#define BC_STATE_PULSE    4
+#define BC_STATE_FADE_IN  5
+#define BC_STATE_FADE_OUT 6
 
 #define BC_PIN_UNASSIGNED          -1
 #define BC_PWM_CHANNEL_UNASSIGNED  99
@@ -42,7 +44,7 @@
 class BlinkControl {
   public:
     BlinkControl(int pin);
-    BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
+    BlinkControl(Shifty* sh, unsigned int shiftRegPin, unsigned int bitCount=8);
     #if defined(ESP32)
     BlinkControl(int pin, uint8_t channel, double freq=50, uint8_t resolutionBits=8);
     #endif
@@ -66,9 +68,11 @@ class BlinkControl {
     void blink2(); // blink twice per second
     void blink3(); // blink three times per second
     void blink4(); // blink four times per second
-    void fastBlinking(); // fast blinking with 6.25 times per second
-    void breathe(int duration=2000);
-    void pulse(int duration=1500);
+    void fastBlinking(); // continuous blinking with 6.25 times per second
+    void breathe(unsigned int duration=2000);
+    void pulse(unsigned int duration=1500);
+    void fadeIn(unsigned int duration=2000);
+    void fadeOut(unsigned int duration=2000);
     void clearBlink();
   
   private:
@@ -102,11 +106,13 @@ class BlinkControl {
     unsigned int _breatheInterval;
     int _brightStep = 1;
     int _dutyCycle = 0;
-    int _brightStepMax = 255; // default 8bit
+    int _brightnessMax = 255; // default 8bit
     
     void _blinkLoop();
     void _breatheLoop();
     void _pulseLoop();
+    void _fadeInLoop();
+    void _fadeOutLoop();
     
     void _onOne(bool shiftRegOffOthers=false);
     void _offOne();

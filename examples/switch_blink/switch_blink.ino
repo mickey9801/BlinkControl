@@ -28,7 +28,7 @@ void loop() {
   if (digitalRead(12) == HIGH && millis()-lastPressedAt >= 1000) {
     lastPressedAt = millis();
     btnState++;
-    if (btnState > 6) btnState = 1;
+    if (btnState > 8) btnState = 1;
     switch (btnState) {
       case 1:
         led.breathe(2000);
@@ -37,15 +37,21 @@ void loop() {
         led.pulse(1500);
         break;
       case 3:
-        led.blink2();
+        led.fadeIn(2000);
         break;
       case 4:
-        led.fastBlinking();
+        led.fadeOut(2000);
         break;
       case 5:
-        led.on();
+        led.blink2();
         break;
       case 6:
+        led.fastBlinking();
+        break;
+      case 7:
+        led.on();
+        break;
+      case 8:
         led.off();
         break;
     }

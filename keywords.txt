@@ -28,10 +28,14 @@ blink4					KEYWORD2
 fastBlinking			KEYWORD2
 breathe					KEYWORD2
 pulse					KEYWORD2
+fadeIn					KEYWORD2
+fadeOut					KEYWORD2
 clearBlink				KEYWORD2
 _blinkLoop				KEYWORD2
 _breatheLoop			KEYWORD2
 _pulseLoop				KEYWORD2
+_fadeInLoop				KEYWORD2
+_fadeOutLoop			KEYWORD2
 _onOne					KEYWORD2
 _offOne					KEYWORD2
 _shiftRegAllPinOff		KEYWORD2
@@ -52,3 +56,5 @@ BC_STATE_ON				LITERAL1
 BC_STATE_BLINK			LITERAL1
 BC_STATE_BREATHE		LITERAL1
 BC_STATE_PULSE			LITERAL1
+BC_STATE_FADE_IN		LITERAL1
+BC_STATE_FADE_OUT		LITERAL1

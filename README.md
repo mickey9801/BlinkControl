@@ -3,7 +3,7 @@
 
 This module can work with digital pins, analog pins, or 74HC595 shift register via johnnyb's [Shifty](https://github.com/johnnyb/Shifty).  
 
-Each instance of the module control one pin. Module provide some predefined blink pattern. You may also control blink pattern by providing a pattern array.  
+Each instance of the module control one pin. Module provide some predefined blink patterns. You may also control blink pattern by providing a pattern array.  
 
 ## Dependencies
 [Shifty by Johnnyb](https://github.com/johnnyb/Shifty)
@@ -72,7 +72,7 @@ We use evert-arias' [EasyButton](https://github.com/evert-arias/EasyButton) to h
 #define SHIFTY_BIT_COUNT  8
 Shifty shift;
 
-BlinkControl led(13);
+BlinkControl led(13, 15);
 BlinkControl sled1(&shift, 0, SHIFTY_BIT_COUNT);
 BlinkControl sled2(&shift, 2, SHIFTY_BIT_COUNT);
 BlinkControl sled3(&shift, 5); // You may ignore the bit count parameter if the shift register is 8-bit
@@ -82,11 +82,13 @@ BlinkControl buzzer(14);
 EasyButton button(12, 35, false, false);
 void btnOnPressed() {
   if (!buzzer.isOff()) {
-    sled1.off();     // Turn off led
-    sled2.breathe();  // Blink once per second
+    led.breathe();   // Breathe LED
+    sled1.off();     // Turn off LED
+    sled2.fastBlinking();  // Continuous blink
     buzzer.pause();  // Pause blinking
   } else {
-    sled1.on();      // Turn on led
+    led.blink1();    // Blink once per second
+    sled1.on();      // Turn on LED
     sled2.blink3();  // Blink three times per second
     buzzer.resume(); // Resume blinking
   }
@@ -151,7 +153,7 @@ void loop() {
 - **Build with 74HC595 Shift Register, work with [Shifty](https://github.com/johnnyb/Shifty) library**
    
    ```cpp
-   BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
+   BlinkControl(Shifty* sh, unsigned int shiftRegPin, unsigned int bitCount=8);
    ```
    
 - **Build for ESP32 breathe LED, work with analog (PWM) pins**
@@ -255,17 +257,27 @@ void loop() {
 These methods are only for analog (PWM) pins of Arduino and ESP32.   
 
   ```cpp
-  void breathe(uint8_t duration=2000);
-  void pulse(uint8_t duration=1500);
+  void breathe(unsigned int duration=2000);
+  void pulse(unsigned int duration=1500);
+  void fadeIn(unsigned int duration=2000);
+  void fadeOut(unsigned int duration=2000);
   ```
   
-For ESP32, you should use the following constructor to create a LED instance for breathe/pulse (Setup PWM channel and attach to the pin):  
+For ESP32, you should use the following constructor to create a LED instance for breathe/pulse/fade-in/fade-out (Setup PWM channel and attach to the pin):  
 
 ```cpp
 BlinkControl(int pin, uint8_t channel, double freq=50, uint8_t resolutionBits=8);
 ```
 
-It is OK for LEDs to both breathe and blink pattern. The module will handle attach/detech operation of assigned pin when switching between analog breathe/pluse and digital blink on ESP32 board.  
+It is OK for LEDs to both breathe and blink patterns. The module will handle attach/detach operation of assigned pin when switching between analog breathe/pulse/fade-in/fade-out and digital blink on ESP32 board.  
+
+- void **fadeIn(** unsigned int **duration**=2000 **)**
+
+  This pattern will switch the state of pin to **BC\_STATE\_ON** when fade-in finished. It will also detach the pin when worked on ESP32 board.   
+
+- void **fadeOut(** unsigned int **duration**=2000 **)**
+
+  This pattern will switch the state of pin to **BC\_STATE\_OFF** when fade-out finished. It will also detach the pin when worked on ESP32 board.   
 
 ### Status related
 
@@ -273,13 +285,15 @@ It is OK for LEDs to both breathe and blink pattern. The module will handle atta
   
   Retrieve the state of pin. Possible return values are:  
   
-  Constant            |Value|Description
-  :-------------------|:---:|:----------
-  BC\_STATE\_OFF      |  0  | Pin level set to **LOW**
-  BC\_STATE\_ON       |  1  | Pin level set to **HIGH** and not blink
-  BC\_STATE\_BLINK    |  2  | Blinking
-  BC\_STATE\_BREATHE  |  3  | Breathe LED (for PWM pin only)
-  BC\_STATE\_PULSE    |  4  | Pulse LED (for PWM pin only)
+  Constant             |Value|Description
+  :--------------------|:---:|:----------
+  BC\_STATE\_OFF       |  0  | Pin level set to **LOW**
+  BC\_STATE\_ON        |  1  | Pin level set to **HIGH** and not blink
+  BC\_STATE\_BLINK     |  2  | Blinking
+  BC\_STATE\_BREATHE   |  3  | Breathe LED (for PWM pin only)
+  BC\_STATE\_PULSE     |  4  | Pulse LED (for PWM pin only)
+  BC\_STATE\_FADE\_IN  |  5  | Fade in LED (for PWM pin only)
+  BC\_STATE\_FADE\_OUT |  6  | Fade out LED (for PWM pin only)
   
   ```cpp
   int state = led.getState();

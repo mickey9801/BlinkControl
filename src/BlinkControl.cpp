@@ -32,7 +32,7 @@ BlinkControl::BlinkControl(int pin) {
   pinMode(this->_pin, OUTPUT);
 }
 
-BlinkControl::BlinkControl(Shifty *sh, int shiftRegPin, int bitCount) {
+BlinkControl::BlinkControl(Shifty *sh, unsigned int shiftRegPin, unsigned int bitCount) {
   this->_shiftReg = sh;
   this->_pin = shiftRegPin;
   this->_shiftRegBitCount = bitCount;
@@ -45,7 +45,8 @@ BlinkControl::BlinkControl(int pin, uint8_t channel, double freq, uint8_t resolu
   this->_pwmChannel = channel;
   this->_pwmFreq = freq;
   this->_pwmResolutionBits = resolutionBits;
-  this->_brightStepMax = pow(2, this->_pwmResolutionBits) - 1;
+  this->_brightnessMax = pow(2, this->_pwmResolutionBits) - 1;
+  pinMode(this->_pin, OUTPUT);
   ledcSetup(this->_pwmChannel, this->_pwmFreq, this->_pwmResolutionBits);
 }
 #endif
@@ -60,6 +61,9 @@ void BlinkControl::begin() {
   this->_pinOn = false;
   this->_state = BC_STATE_OFF;
   this->_lastAction = 0;
+  #if defined(ESP32)
+  this->_pwmPinAttached = false;
+  #endif
 }
 
 void BlinkControl::loop() {
@@ -69,6 +73,10 @@ void BlinkControl::loop() {
     this->_breatheLoop();
   } else if (this->_state == BC_STATE_PULSE) {
     this->_pulseLoop();
+  } else if (this->_state == BC_STATE_FADE_IN) {
+    this->_fadeInLoop();
+  } else if (this->_state == BC_STATE_FADE_OUT) {
+    this->_fadeOutLoop();
   }
 }
 
@@ -98,7 +106,7 @@ void BlinkControl::_breatheLoop() {
   if (curtime - this->_lastAction > this->_breatheInterval) {
     this->_lastAction = curtime;
     this->_dutyCycle += this->_brightStep;
-    if (this->_dutyCycle <= 0 || this->_dutyCycle >= this->_brightStepMax) {
+    if (this->_dutyCycle <= 0 || this->_dutyCycle >= this->_brightnessMax) {
       this->_brightStep = -this->_brightStep;
     }
     #if defined(ESP32)
@@ -115,7 +123,7 @@ void BlinkControl::_pulseLoop() {
     this->_lastAction = curtime;
     this->_dutyCycle -= this->_brightStep;
     if (this->_dutyCycle < 0) {
-      this->_dutyCycle = this->_brightStepMax;
+      this->_dutyCycle = this->_brightnessMax;
       this->_lastAction += 500;
     }
     #if defined(ESP32)
@@ -123,6 +131,40 @@ void BlinkControl::_pulseLoop() {
     #else
     analogWrite(this->_pin, this->_dutyCycle);
     #endif
+  }
+}
+
+void BlinkControl::_fadeInLoop() {
+  if (this->_dutyCycle >= this->_brightnessMax) return;
+  unsigned long curtime = millis();
+  if (curtime - this->_lastAction > this->_breatheInterval) {
+    this->_lastAction = curtime;
+    this->_dutyCycle += this->_brightStep;
+    #if defined(ESP32)
+    ledcWrite(this->_pwmChannel, this->_dutyCycle);
+    #else
+    analogWrite(this->_pin, this->_dutyCycle);
+    #endif
+    if (this->_dutyCycle == this->_brightnessMax) {
+      this->on();
+    }
+  }
+}
+
+void BlinkControl::_fadeOutLoop() {
+  if (this->_dutyCycle <= 0) return;
+  unsigned long curtime = millis();
+  if (curtime - this->_lastAction > this->_breatheInterval) {
+    this->_lastAction = curtime;
+    this->_dutyCycle -= this->_brightStep;
+    #if defined(ESP32)
+    ledcWrite(this->_pwmChannel, this->_dutyCycle);
+    #else
+    analogWrite(this->_pin, this->_dutyCycle);
+    #endif
+    if (this->_dutyCycle == 0) {
+      this->off();
+    }
   }
 }
 
@@ -172,8 +214,8 @@ void BlinkControl::off() {
   this->_state = BC_STATE_OFF;
 }
 
-// set state to off only, not to touch the timings array
-// so that it can be restart again
+// Turn off only, haven't touch the pattern array
+// so that the LED can be resumed
 void BlinkControl::pause() {
   if (this->_state != BC_STATE_BLINK && this->_state != BC_STATE_BREATHE && this->_state != BC_STATE_PULSE) {
     return;
@@ -200,7 +242,7 @@ void BlinkControl::resume() {
   if (this->_prevState == BC_STATE_BREATHE) {
     this->_dutyCycle = 0;
   } else if (this->_prevState == BC_STATE_PULSE) {
-    this->_dutyCycle = this->_brightStepMax;
+    this->_dutyCycle = this->_brightnessMax;
   }
   
   this->_state = this->_prevState;
@@ -243,7 +285,7 @@ void BlinkControl::fastBlinking() {
   this->blink(this->blinkTiming625, 2);
 }
 
-void BlinkControl::breathe(int duration) {
+void BlinkControl::breathe(unsigned int duration) {
   if (this->_state != BC_STATE_BREATHE && this->_state != BC_STATE_OFF) {
     this->off();
   }
@@ -252,11 +294,11 @@ void BlinkControl::breathe(int duration) {
   #endif
   
   this->_dutyCycle = 0;
-  this->_breatheInterval = round(duration / (this->_brightStepMax*2));
+  this->_breatheInterval = round(duration / (this->_brightnessMax*2));
   this->_state = BC_STATE_BREATHE;
 }
 
-void BlinkControl::pulse(int duration) {
+void BlinkControl::pulse(unsigned int duration) {
   if (this->_state != BC_STATE_PULSE && this->_state != BC_STATE_OFF) {
     this->off();
   }
@@ -264,9 +306,35 @@ void BlinkControl::pulse(int duration) {
   this->_pwmAttachPin();
   #endif
   
-  this->_dutyCycle = this->_brightStepMax;
-  this->_breatheInterval = round(duration / this->_brightStepMax);
+  this->_dutyCycle = this->_brightnessMax;
+  this->_breatheInterval = round(duration / this->_brightnessMax);
   this->_state = BC_STATE_PULSE;
+}
+
+void BlinkControl::fadeIn(unsigned int duration) {
+  if (this->_state != BC_STATE_FADE_IN && this->_state != BC_STATE_OFF) {
+    this->off();
+  }
+  #if defined(ESP32)
+  this->_pwmAttachPin();
+  #endif
+  
+  this->_dutyCycle = 0;
+  this->_breatheInterval = round(duration / this->_brightnessMax);
+  this->_state = BC_STATE_FADE_IN;
+}
+
+void BlinkControl::fadeOut(unsigned int duration) {
+  if (this->_state != BC_STATE_FADE_OUT && this->_state != BC_STATE_OFF) {
+    this->off();
+  }
+  #if defined(ESP32)
+  this->_pwmAttachPin();
+  #endif
+  
+  this->_dutyCycle = this->_brightnessMax;
+  this->_breatheInterval = round(duration / this->_brightnessMax);
+  this->_state = BC_STATE_FADE_OUT;
 }
 
 void BlinkControl::clearBlink() {
