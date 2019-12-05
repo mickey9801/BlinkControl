@@ -1,9 +1,9 @@
 # BlinkControl
-This is an Arduino/ESP32 module for easily manage multiple LED blinking or Buzzer beats with different timing.  
+**BlinkControl** is an Arduino/ESP32 module designed for easily manage multiple LED blinking or buzzer alarm with different pattern.  
 
 This module can work with digital pins, analog pins, or 74HC595 shift register via johnnyb's [Shifty](https://github.com/johnnyb/Shifty).  
 
-Each instance of the module control one pin. Module provide some predefined blink timing. You may also control blink timing by providing a timing array.  
+Each instance of the module control one pin. Module provide some predefined blink pattern. You may also control blink pattern by providing a pattern array.  
 
 ## Dependencies
 [Shifty by Johnnyb](https://github.com/johnnyb/Shifty)
@@ -15,22 +15,22 @@ Each instance of the module control one pin. Module provide some predefined blin
 2. [Download or clone this repository into your arduino libraries directory](https://help.github.com/articles/cloning-a-repository/)  
 
 
-## Usage
-1. Include BlinkControl module
+## Basic Usage
+1. Include BlinkControl module  
    
    ```cpp
    #include <BlinkControl.h>
    ```
    
-2. Create a BlinkControl object with pin number or [Shifty](https://github.com/johnnyb/Shifty) instance.
+2. Create a BlinkControl object with pin number or [Shifty](https://github.com/johnnyb/Shifty) instance.  
    
    ```cpp
    BlinkControl led(15);
    ```
    
-   (For detail of create BlinkControl instance for 74HC595, please check [Shift Register 74Hc595](examples/shift_register_74hc595/shift_register_74hc595.ino) example.)
+   (For detail of create BlinkControl instance for 74HC595, please check [Shift Register 74Hc595](examples/shift_register_74hc595/shift_register_74hc595.ino) example.)  
    
-3. In setup(), initial the BlinkControl object.
+3. In `setup()`, initial the BlinkControl object.  
    
    ```cpp
    void setup() {
@@ -38,7 +38,7 @@ Each instance of the module control one pin. Module provide some predefined blin
    }
    ```
    
-4. In loop() of the sketch, run the object's loop() method.
+4. In `loop()` of the sketch, run the object's **loop()** method.  
    
    ```cpp
    void loop() {
@@ -46,13 +46,13 @@ Each instance of the module control one pin. Module provide some predefined blin
    }
    ```   
 
-5. Set blink timing
+5. Set blink pattern  
    
    ```cpp
-   led.blink1(); // Blink once pre second using predefined timing
+   led.blink1(); // Blink once pre second using predefined pattern
    ```
    
-   or just turn it on
+   or just turn it on  
    
    ```cpp
    led.on();
@@ -60,7 +60,7 @@ Each instance of the module control one pin. Module provide some predefined blin
 
 ## Example
 
-Control 1 LED connected to digital pin, 4 LED connected to 74HC595 shift register and a buzzer "blink" with different timing. When the button connect to PIN 12 pressed, pause the buzzer, turn off LED in PIN 0 of 74HC595 and change the blink timing of LED in PIN 2 of 74HC595.  
+Control 1 LED connected to digital pin, 4 LED connected to 74HC595 shift register and a buzzer "blink" with different pattern. When the button connect to PIN 12 pressed, the buzzer will be paused, LED in PIN 0 of 74HC595 will be turned off and blink pattern of LED in PIN 2 of 74HC595 will be changed into breathe pattern.  
 
 We use evert-arias' [EasyButton](https://github.com/evert-arias/EasyButton) to handle button actions.  
 
@@ -72,7 +72,7 @@ We use evert-arias' [EasyButton](https://github.com/evert-arias/EasyButton) to h
 #define SHIFTY_BIT_COUNT  8
 Shifty shift;
 
-BlinkControl led(15);
+BlinkControl led(13);
 BlinkControl sled1(&shift, 0, SHIFTY_BIT_COUNT);
 BlinkControl sled2(&shift, 2, SHIFTY_BIT_COUNT);
 BlinkControl sled3(&shift, 5); // You may ignore the bit count parameter if the shift register is 8-bit
@@ -83,7 +83,7 @@ EasyButton button(12, 35, false, false);
 void btnOnPressed() {
   if (!buzzer.isOff()) {
     sled1.off();     // Turn off led
-    sled2.blink1();  // Blink once per second
+    sled2.breathe();  // Blink once per second
     buzzer.pause();  // Pause blinking
   } else {
     sled1.on();      // Turn on led
@@ -100,7 +100,7 @@ void setup() {
   Serial.println();
 
   shift.setBitCount(SHIFTY_BIT_COUNT);
-  shift.setPins(17, 32, 33);
+  shift.setPins(15, 32, 33);
   
   led.begin();     // Initial led
   led.blink1();    // Blink once per second
@@ -112,8 +112,8 @@ void setup() {
   sled2.blink3();  // Blink three times per second
   
   sled3.begin();
-  int sled3Timing[] = {1000,200,60,200,1000,200,60,1000}; // Custom blink timing
-  sled3.blink(sled3Timing, sizeof(sled3Timing)/sizeof(int)); // Set custom blink timing
+  int sled3Pattern[] = {1000,200,60,200,1000,200,60,1000}; // Custom blink pattern
+  sled3.blink(sled3Pattern, sizeof(sled3Pattern)/sizeof(int)); // Set custom blink pattern
   
   sled4.begin();
   sled4.blink2();  // Blink twice per second
@@ -148,13 +148,13 @@ void loop() {
    BlinkControl(int pin);
    ```
 
-- **Build with 74HC595 Shift Register Pin, work with [Shifty](https://github.com/johnnyb/Shifty) library**
+- **Build with 74HC595 Shift Register, work with [Shifty](https://github.com/johnnyb/Shifty) library**
    
    ```cpp
    BlinkControl(Shifty* sh, int shiftRegPin, int bitCount=8);
    ```
    
-- **Build for ESP32 breathe LED**
+- **Build for ESP32 breathe LED, work with analog (PWM) pins**
   
   ```cpp
   BlinkControl(int pin, uint8_t channel, double freq=50, uint8_t resolutionBits=8);
@@ -164,7 +164,7 @@ void loop() {
 
 - void **begin ()**
   
-  Initial object parameters. Should be placed inside setup() of the sketch.  
+  Initial object parameters. Should be placed inside `setup()` of the sketch.  
   
   ```cpp
   begin();
@@ -172,7 +172,7 @@ void loop() {
   
 - void **loop ()**
   
-  Module loop. Should be placed inside loop() of the sketch.  
+  Module loop. Should be placed inside `loop()` of the sketch.  
     
   ```cpp
   loop();
@@ -199,7 +199,7 @@ void loop() {
   
 - void **offAll ()**
   
-  *Only work for shift register.* Set all pins of same shift register to **LOW**.  
+  *Only work for 74HC595 shift register.* Set all pins of same shift register to **LOW**.  
   
   ```cpp
   shiftRegisterPin.offAll();
@@ -209,7 +209,7 @@ void loop() {
 
 - void **pause ()**
   
-  Pause blinking.
+  Pause blinking or breathing.
 
   ```cpp
   led.pause();
@@ -217,7 +217,7 @@ void loop() {
 
 - void **resume ()**
   
-  Resume blinking from pause.  
+  Resume blinking/breathing from pause.  
   
   ```cpp
   led.resume();
@@ -225,11 +225,11 @@ void loop() {
 
 - void **blink (** int **timings[],** int **timingCount )**
   
-  Customize blink timing by providing a timing array. Unit of each value is millisecond. Pin will be set to **HIGH** and **LOW** alternatively based on those timing, starting from **HIGH**.  
+  Customize blink pattern by providing a pattern array. Unit of each element is **millisecond**. Pin will be set to **HIGH** and **LOW** alternatively based on those pattern, starting from **HIGH**.  
   
   ```cpp
-  int blinkTiming[] = {1000,200,60,200,1000,200,60,1000};
-  led.blink(blinkTiming, sizeof(blinkTiming)/sizeof(int));
+  int blinkPattern[] = {1000,200,60,200,1000,200,60,1000};
+  led.blink(blinkPattern, sizeof(blinkTiming)/sizeof(int));
   ```
   
 - **Convenient methods for blinking**
@@ -239,12 +239,12 @@ void loop() {
   void blink2(); // blink twice per second
   void blink3(); // blink three times per second
   void blink4(); // blink four times per second
-  void fastBlinking(); // fast blinking with 6.25 times per second
+  void fastBlinking(); // continuous blinking with 6.25 times per second
   ```
 
 - void **clearBlink ()**
   
-  Reset the object and delete blink timing.  
+  Reset the object and delete blink/breathe pattern.  
   
   ```cpp
   led.clearBlink();
@@ -252,20 +252,20 @@ void loop() {
   
 ### Breathe LED
 
-These methods are only for analog (PWM) pins of Android and ESP32.  
+These methods are only for analog (PWM) pins of Arduino and ESP32.   
 
   ```cpp
   void breathe(uint8_t duration=2000);
   void pulse(uint8_t duration=1500);
   ```
   
-For ESP32, you should use the following constructor to create a LED instance for breathe/pulse (Setup PWM channel and attach to the pin):
+For ESP32, you should use the following constructor to create a LED instance for breathe/pulse (Setup PWM channel and attach to the pin):  
 
 ```cpp
 BlinkControl(int pin, uint8_t channel, double freq=50, uint8_t resolutionBits=8);
 ```
 
-It is OK for LEDs the use both breathe and blink. The module will handle attach/detech operation of assigned pin when switching between analog breathe/pluse and digital blink.  
+It is OK for LEDs to both breathe and blink pattern. The module will handle attach/detech operation of assigned pin when switching between analog breathe/pluse and digital blink on ESP32 board.  
 
 ### Status related
 
@@ -287,7 +287,7 @@ It is OK for LEDs the use both breathe and blink. The module will handle attach/
 
 - bool **isOff ()**
   
-  Check if the LED is off (set to **LOW**).
+  Check if the LED is off (set to **LOW**).  
   
   ```cpp
   bool result = led.isOff();
@@ -295,4 +295,4 @@ It is OK for LEDs the use both breathe and blink. The module will handle attach/
 
 ## What's Next
 
-- Build a Shify Manager to handle bit writing operation across multiple BlinkControl instances for faster operation.
+- Build a Shify Manager to handle bit writing operation across multiple BlinkControl instances for faster operation.  
