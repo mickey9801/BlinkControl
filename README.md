@@ -28,7 +28,7 @@ Each instance of the module control one pin. Module provide some predefined blin
    BlinkControl led(15);
    ```
    
-   (For detail of create BlinkControl instance for 74HC595, please check [Shift Register 74Hc595](examples/shift_register_74hc595/shift_register_74hc595.ino) example.)  
+   (For detail of create BlinkControl instance for 74HC595, please check [Shift Register 74Hc595 example](examples/shift_register_74hc595/shift_register_74hc595.ino).)  
    
 3. In `setup()`, initial the BlinkControl object.  
    
@@ -46,10 +46,16 @@ Each instance of the module control one pin. Module provide some predefined blin
    }
    ```   
 
-5. Set blink pattern  
+5. Set blink pattern,  
    
    ```cpp
    led.blink1(); // Blink once pre second using predefined pattern
+   ```
+   
+   breathe pattern,  
+   
+   ```cpp
+   led.breathe(); // breathe LED 2 seconds/cycle by default
    ```
    
    or just turn it on  
