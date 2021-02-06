@@ -51,10 +51,6 @@ BlinkControl::BlinkControl(int pin, uint8_t channel, double freq, uint8_t resolu
 }
 #endif
 
-BlinkControl::~BlinkControl() {
-  delete[] this->_blinkTiming;
-}
-
 void BlinkControl::begin() {
   this->_offOne();
   this->_timingCursor = 0;
@@ -254,8 +250,7 @@ void BlinkControl::blink(int timings[], int timingCount) {
     this->off();
   }
   
-  this->_timingCount = timingCount;
-  this->_blinkTiming = new int[this->_timingCount];
+  this->_timingCount = min(timingCount, MAX_TIMING_COUNT);
   for (int i = 0; i < this->_timingCount; i++) {
     this->_blinkTiming[i] = timings[i];
   }
@@ -339,7 +334,6 @@ void BlinkControl::fadeOut(unsigned int duration) {
 
 void BlinkControl::clearBlink() {
   this->_offOne();
-  delete[] this->_blinkTiming;
   this->_timingCount = 0;
   this->_pinOn = false;
   this->_prevState = BC_STATE_OFF;

@@ -30,6 +30,7 @@
 #include <Arduino.h>
 #include <Shifty.h>
 
+#define MAX_TIMING_COUNT  16
 #define BC_STATE_OFF      0
 #define BC_STATE_ON       1
 #define BC_STATE_BLINK    2
@@ -97,7 +98,7 @@ class BlinkControl {
     int blinkTiming4[8]   = {80,80,80,80,80,80,80,440};
     int blinkTiming625[2] = {80,80};
     
-    int* _blinkTiming;
+    int _blinkTiming[MAX_TIMING_COUNT];
     int _timingCount  = 0;
     int _timingCursor = 0;
     unsigned long _lastAction = 0;
